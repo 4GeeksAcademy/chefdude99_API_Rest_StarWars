@@ -17,6 +17,15 @@ class Characters(db.Model):
     Name: Mapped[str] = mapped_column(String(20), nullable=False)
     Heigth: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    def __repr__(self):
+        return '<Character %r>' % self.id
+    def serialize(self):
+        return {
+            'id': self.id,
+            'Name': self.Name,
+            'Heigth': self.Heigth
+        }
+
 class Starships(db.Model):
     __tablename__ = 'starships'
     id: Mapped[int] = mapped_column(primary_key=True)
