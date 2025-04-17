@@ -75,6 +75,27 @@ def get_user_by_id(id):
         return jsonify({'msg': 'User NOT FOUND'}), 404
     return jsonify(user.serialize()), 200
 
+@app.route('/characters/<int:id>', methods=['GET'])
+def get_character_by_id(id):
+    character = Characters.query.get(id)
+    if character is None:
+        return jsonify({'msg': 'Character NOT FOUND'}), 404
+    return jsonify(character.serialize()), 200
+
+@app.route('/starships/<int:id>', methods=['GET'])
+def get_starship_by_id(id):
+    starship = Starships.query.get(id)
+    if starship is None:
+        return jsonify({'msg': 'Starship NOT FOUND'}), 404
+    return jsonify(starship.serialize()), 200
+
+@app.route('/planets/<int:id>', methods=['GET'])
+def get_planet_by_id(id):
+    planet = Planets.query.get(id)
+    if planet is None:
+        return jsonify({'msg': 'Planet NOT FOUND'}), 404
+    return jsonify(planet.serialize()), 200
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
