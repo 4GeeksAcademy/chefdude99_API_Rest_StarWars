@@ -36,23 +36,44 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    if len(users) < 1:
+        return jsonify({'msg': 'NOT FOUND'}), 404
+    serialized_users = [x.serialize() for x in users]
+    return serialized_users, 202
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
-
-
-@app.route('/character', methods=['GET'])
+@app.route('/characters', methods=['GET'])
 def get_all_characters():
     characters = Characters.query.all()
     if len(characters) < 1: 
         return jsonify({'msg': 'NOT FOUND'}), 404
-    serialized_characters = list(map(lambda x: x.serialize(),characters))
+    serialized_characters = [x.serialize() for x in characters]
     return serialized_characters, 202
+
+@app.route('/starships', methods=['GET'])
+def get_all_starships():
+    starships = Starships.query.all()
+    if len(starships) < 1: 
+        return jsonify({'msg': 'NOT FOUND'}), 404
+    serialized_starships = [x.serialize() for x in starships]
+    return serialized_starships, 202
+
+@app.route('/planets', methods=['GET'])
+def get_all_planets():
+    planets = Planets.query.all()
+    if len(planets) < 1: 
+        return jsonify({'msg': 'NOT FOUND'}), 404
+    serialized_planets = [x.serialize() for x in planets]
+    return serialized_planets, 202
+
+@app.route('/users/<int:id>', methods=['GET'])
+def get_user_by_id(id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({'msg': 'User NOT FOUND'}), 404
+    return jsonify(user.serialize()), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
