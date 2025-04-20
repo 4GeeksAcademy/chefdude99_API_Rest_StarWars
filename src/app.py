@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Characters, Planets, Starships
+from models import db, User, Characters, Planets, Starships, Fav_planet
 #from models import Person
 
 app = Flask(__name__)
@@ -95,6 +95,24 @@ def get_planet_by_id(id):
     if planet is None:
         return jsonify({'msg': 'Planet NOT FOUND'}), 404
     return jsonify(planet.serialize()), 200
+
+@app.route('/users/favorites', methods=['GET'])
+def get_favorites_user():
+    users = User.query.all()
+    if not users:
+        return jsonify({'msg': 'Users NOT FOUND'}), 404
+
+    favorites = []
+    for user in users:
+        user_favorites = {
+            'user_id': user.id,
+            'characters_favorites': [fav.character.serialize() for fav in user.characters_favorites],
+            'starships_favorites': [fav.starship.serialize() for fav in user.starships_favorites],
+            'planets_favorites': [fav.planet.serialize() for fav in user.planets_favorites]
+        }
+        favorites.append(user_favorites)
+
+    return jsonify(favorites), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
