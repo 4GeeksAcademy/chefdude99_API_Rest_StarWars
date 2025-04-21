@@ -168,6 +168,52 @@ def add_favorite_starship(starship_id, user_id):
      db.session.commit()
      return jsonify({'msg' : 'OK', 'data' : new_favorite.serialize()})
 
+@app.route('/favorite/planet/<int:user_id>/<int:planet_id>', methods=['DELETE'])
+def delete_planet(user_id, planet_id):
+    planet = Planets.query.get(planet_id)
+    if planet is None:
+          return jsonify({'msg' : 'Planeta no existe'}), 404
+    user = User.query.get(user_id)
+    if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 404
+    favorite = Fav_planet.query.filter_by(planet_id = planet_id, user_id = user_id).first()
+    if favorite is None:
+          return jsonify({'msg' : 'Favorito no existe'}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({'msg' : 'OK'}), 200
+
+@app.route('/favorite/character/<int:user_id>/<int:character_id>', methods=['DELETE'])
+def delete_character(user_id, character_id):
+    character = Characters.query.get(character_id)
+    if character is None:
+          return jsonify({'msg' : 'Personaje no existe'}), 404
+    user = User.query.get(user_id)
+    if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 404
+    favorite = Fav_character.query.filter_by(character_id = character_id, user_id = user_id).first()
+    if favorite is None:
+          return jsonify({'msg' : 'Favorito no existe'}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({'msg' : 'OK'}), 200
+
+@app.route('/favorite/starship/<int:user_id>/<int:starship_id>', methods=['DELETE'])
+def delete_starship(user_id, starship_id):
+    starship = Starships.query.get(starship_id)
+    if starship is None:
+          return jsonify({'msg' : 'Nave no existe'}), 404
+    user = User.query.get(user_id)
+    if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 404
+    favorite = Fav_starship.query.filter_by(starship_id = starship_id, user_id = user_id).first()
+    if favorite is None:
+          return jsonify({'msg' : 'Favorito no existe'}), 404
+    db.session.delete(favorite)
+    db.session.commit()
+    return jsonify({'msg' : 'OK'}), 200
+    
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
