@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Characters, Planets, Starships, Fav_planet
+from models import db, User, Characters, Planets, Starships, Fav_planet, Fav_character, Fav_starship
 #from models import Person
 
 app = Flask(__name__)
@@ -113,6 +113,60 @@ def get_favorites_user():
         favorites.append(user_favorites)
 
     return jsonify(favorites), 200
+
+@app.route('/favorite/planet/<int:user_id>/<int:planet_id>', methods=['POST'])
+def add_favorite_planet(planet_id, user_id):
+     planet = Planets.query.get(planet_id)
+     if planet is None:
+          return jsonify({'msg' : 'Planeta no existe'}), 400
+     user = User.query.get(user_id)
+     if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 400
+     favorite = Fav_planet.query.filter_by(planet_id = planet_id, user_id = user_id).first()
+     if favorite != None:
+          return jsonify({'msg' : 'Favorito ya existe'}), 400
+     new_favorite = Fav_planet()
+     new_favorite.user_id = user_id
+     new_favorite.planet_id= planet_id
+     db.session.add(new_favorite)
+     db.session.commit()
+     return jsonify({'msg' : 'OK', 'data' : new_favorite.serialize()})
+
+@app.route('/favorite/character/<int:user_id>/<int:character_id>', methods=['POST'])
+def add_favorite_character(character_id, user_id):
+     character = Characters.query.get(character_id)
+     if character is None:
+          return jsonify({'msg' : 'Personaje no existe'}), 400
+     user = User.query.get(user_id)
+     if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 400
+     favorite = Fav_character.query.filter_by(character_id = character_id, user_id = user_id).first()
+     if favorite != None:
+          return jsonify({'msg' : 'Favorito ya existe'}), 400
+     new_favorite = Fav_character()
+     new_favorite.user_id = user_id
+     new_favorite.character_id= character_id
+     db.session.add(new_favorite)
+     db.session.commit()
+     return jsonify({'msg' : 'OK', 'data' : new_favorite.serialize()})
+
+@app.route('/favorite/starship/<int:user_id>/<int:starship_id>', methods=['POST'])
+def add_favorite_starship(starship_id, user_id):
+     starship = Starships.query.get(starship_id)
+     if starship is None:
+          return jsonify({'msg' : 'Nave no existe'}), 400
+     user = User.query.get(user_id)
+     if user is None:
+          return jsonify({'msg' : 'Usuario no encontrado'}), 400
+     favorite = Fav_starship.query.filter_by(starship_id = starship_id, user_id = user_id).first()
+     if favorite != None:
+          return jsonify({'msg' : 'Favorito ya existe'}), 400
+     new_favorite = Fav_starship()
+     new_favorite.user_id = user_id
+     new_favorite.starship_id= starship_id
+     db.session.add(new_favorite)
+     db.session.commit()
+     return jsonify({'msg' : 'OK', 'data' : new_favorite.serialize()})
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
